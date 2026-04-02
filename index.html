@@ -73,9 +73,9 @@
         按我互動！
     </button>
 
-    <button id="startBtn" style="padding: 20px; font-size: 20px;">
+    <!--<button id="startBtn" style="padding: 20px; font-size: 20px;">
         點擊開始 (啟動感應器)
-    </button>
+    </button>-->
 
     <script>
         // 這裡稍後會加入 JavaScript 通訊邏輯
@@ -83,7 +83,8 @@
         // 這裡的網址是你部署在 Render 或 Heroku 的後端網址
         const socket = io("https://triangle-communication.onrender.com", {
             transports: ["websocket"], // 強制使用 WebSocket 減少延遲
-            reconnectionAttempts: 5    // 斷線後嘗試重連次數
+            reconnectionAttempts: 5,   // 斷線後嘗試重連次數
+            forceNew: true           // 強制建立新連線，避免重複使用舊連線導致問題
         });
 
         // 2. 監聽連線事件 (用於給觀眾視覺反饋)
@@ -132,10 +133,10 @@
             }, 50); // 50毫秒後開始退色
         }
 
-        document.getElementById('startBtn').addEventListener('click', function() {
+        /*document.getElementById('startBtn').addEventListener('click', function() {
             //startShakeTracking();
             this.style.display = 'none'; // 點擊後隱藏按鈕
-        });
+        });*/
 
         // Check for device motion support
         /*function startShakeDetection() {
