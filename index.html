@@ -153,7 +153,7 @@
         });
 
         // Check for device motion support
-        /*function startShakeDetection() {
+        function startShakeDetection() {
             // 檢查瀏覽器是否支援 DeviceMotionEvent
             if (typeof DeviceMotionEvent !== 'undefined' && typeof DeviceMotionEvent.requestPermission === 'function') {
                 // iOS 13+ 特有流程
@@ -161,8 +161,8 @@
                     .then(permissionState => {
                         if (permissionState === 'granted') {
                             // 修正：移除註解，並先移除舊的監聽器防止重複
-                            //window.removeEventListener('devicemotion', handleShake);
-                            //window.addEventListener('devicemotion', handleShake);
+                            window.removeEventListener('devicemotion', handleShake);
+                            window.addEventListener('devicemotion', handleShake);
                             console.warn("iOS 加速度權限已允許");
                         } else {
                             alert("請允許運動感應權限以參與搖晃互動！");
@@ -173,37 +173,9 @@
                     });
             } else {
                 // Android 或 PC 測試環境
-                //window.removeEventListener('devicemotion', handleShake);
-                //window.addEventListener('devicemotion', handleShake);
-                console.warn("非 iOS 環境，直接啟動監聽");
-            }
-        }*/
-
-        function startShakeDetection() {
-            // 檢查點 1：確保 console 在最前面，用來確認函數有被呼叫
-            console.log("Function called: startShakeDetection");
-            alert("觸發成功：正在檢查權限");
-
-            // 檢查點 2：DeviceMotionEvent 的判斷邏輯必須完整
-            if (typeof DeviceMotionEvent !== 'undefined' && typeof DeviceMotionEvent.requestPermission === 'function') {
-                
-                DeviceMotionEvent.requestPermission()
-                    .then(function(response) {
-                        if (response === 'granted') {
-                            window.addEventListener('devicemotion', handleShake);
-                            alert("iOS 權限已准許");
-                        } else {
-                            alert("權限被拒絕");
-                        }
-                    })
-                    .catch(function(error) {
-                        alert("Promise 錯誤: " + error);
-                    }); // 檢查點 3：這裡必須是 }); 結尾
-
-            } else {
-                // 非 iOS 裝置
+                window.removeEventListener('devicemotion', handleShake);
                 window.addEventListener('devicemotion', handleShake);
-                alert("非 iOS 裝置，直接啟動監聽");
+                console.warn("非 iOS 環境，直接啟動監聽");
             }
         }
 
