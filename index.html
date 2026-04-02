@@ -153,7 +153,7 @@
         });
 
         // Check for device motion support
-        function startShakeDetection() {
+        /*function startShakeDetection() {
             // 檢查瀏覽器是否支援 DeviceMotionEvent
             if (typeof DeviceMotionEvent !== 'undefined' && typeof DeviceMotionEvent.requestPermission === 'function') {
                 // iOS 13+ 特有流程
@@ -176,6 +176,28 @@
                 //window.removeEventListener('devicemotion', handleShake);
                 //window.addEventListener('devicemotion', handleShake);
                 console.warn("非 iOS 環境，直接啟動監聽");
+            }
+        }*/
+
+        function startShakeDetection() {
+            console.log("開始執行權限檢查...");
+            
+            const isIOS = typeof DeviceMotionEvent !== 'undefined' && typeof DeviceMotionEvent.requestPermission === 'function';
+
+            if (isIOS) {
+                DeviceMotionEvent.requestPermission()
+                    .then((state) => {
+                        if (state === 'granted') {
+                            //window.addEventListener('devicemotion', handleShake);
+                            alert("iOS 權限成功");
+                        }
+                    })
+                    .catch((e) => {
+                        alert("錯誤: " + e);
+                    });
+            } else {
+                //window.addEventListener('devicemotion', handleShake);
+                console.log("非 iOS 設備，直接監聽");
             }
         }
 
