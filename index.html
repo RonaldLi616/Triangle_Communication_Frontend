@@ -166,7 +166,7 @@
             }
         }
 
-        let lastX, lastY, lastZ;
+        let lastX = 0, lastY = 0, lastZ = 0;
         let moveCounter = 0;
         function handleShake(event) {
             let acc = event.accelerationIncludingGravity;
@@ -187,7 +187,7 @@
             // 當連續偵測到幾次大幅度晃動，判定為「搖晃」
             if (moveCounter > 2) {
                 console.log("偵測到搖晃！");
-                sendShake();
+                sendShakeData();
                 moveCounter = 0; // 重置計數
             }
 
@@ -199,7 +199,7 @@
         function sendShakeData() {
             triggerFlash('flash-yellow'); // 觸發閃爍效果
             if(window.navigator.vibrate) {
-                window.navigator.vibrate(100, 50, 100); // 震動模式：震動-停頓-震動
+                window.navigator.vibrate([100, 50, 100]); // 震動模式：震動-停頓-震動
             }
             socket.emit('playerAction', {
                 action: "SHAKE",
