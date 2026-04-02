@@ -154,7 +154,8 @@
                 DeviceMotionEvent.requestPermission()
                     .then(permissionState => {
                         if (permissionState === 'granted') {
-                            window.addEventListener('devicemotion', handleShake);
+                            //window.addEventListener('devicemotion', handleShake);
+                            console.warn("Accelerometer permission granted, shake detection started.");
                         } else {
                             console.warn("無法獲取加速度數據，請允許權限");
                         }
@@ -162,13 +163,14 @@
                     .catch(console.error);
             } else {
                 // 非 iOS 或舊版本直接監聽
-                window.addEventListener('devicemotion', handleShake);
+                //window.addEventListener('devicemotion', handleShake);
+                console.warn("Accelerometer permission granted, shake detection started.");
             }
         }
 
         let lastX = 0, lastY = 0, lastZ = 0;
         let moveCounter = 0;
-        function handleShake(event) {
+        /*function handleShake(event) {
             let acc = event.accelerationIncludingGravity;
             if(!acc) return;
             
@@ -194,9 +196,9 @@
             lastX = acc.x;
             lastY = acc.y;
             lastZ = acc.z;
-        }
+        }*/
 
-        function sendShakeData() {
+        /*function sendShakeData() {
             triggerFlash('flash-yellow'); // 觸發閃爍效果
             if(window.navigator.vibrate) {
                 window.navigator.vibrate([100, 50, 100]); // 震動模式：震動-停頓-震動
@@ -205,7 +207,7 @@
                 action: "SHAKE",
                 timestamp: Date.now()
             });
-        }
+        }*/
 
     </script>
 </body>
