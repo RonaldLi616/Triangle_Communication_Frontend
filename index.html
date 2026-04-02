@@ -35,6 +35,11 @@
             transition: none; /* 立即變色，無過渡 */
         }
 
+        .flash-green {
+            background-color: #2ed573 !important;
+            transition: none; /* 立即變色，無過渡 */
+        }
+
         #status-light {
             width: 12px; height: 12px; border-radius: 50%; background: #ff4757; margin-bottom: 10px;
         }
@@ -149,22 +154,28 @@
 
         // Check for device motion support
         function startShakeDetection() {
-            if(typeof DeviceMotionEvent.requestPermission === 'function') {
-                // iOS 13+ 需要請求權限
+            // 檢查瀏覽器是否支援 DeviceMotionEvent
+            if (typeof DeviceMotionEvent !== 'undefined' && typeof DeviceMotionEvent.requestPermission === 'function') {
+                // iOS 13+ 特有流程
                 DeviceMotionEvent.requestPermission()
                     .then(permissionState => {
                         if (permissionState === 'granted') {
+                            // 修正：移除註解，並先移除舊的監聽器防止重複
+                            //window.removeEventListener('devicemotion', handleShake);
                             //window.addEventListener('devicemotion', handleShake);
-                            console.warn("Accelerometer permission granted, shake detection started.");
+                            console.warn("iOS 加速度權限已允許");
                         } else {
-                            console.warn("無法獲取加速度數據，請允許權限");
+                            alert("請允許運動感應權限以參與搖晃互動！");
                         }
                     })
-                    .catch(console.error);
+                    .catch(err => {
+                        console.error("權限請求出錯:", err);
+                    });
             } else {
-                // 非 iOS 或舊版本直接監聽
+                // Android 或 PC 測試環境
+                //window.removeEventListener('devicemotion', handleShake);
                 //window.addEventListener('devicemotion', handleShake);
-                console.warn("Accelerometer permission granted, shake detection started.");
+                console.warn("非 iOS 環境，直接啟動監聽");
             }
         }
 
