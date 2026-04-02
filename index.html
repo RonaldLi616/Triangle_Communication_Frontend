@@ -107,9 +107,9 @@
 
             triggerFlash('flash-white'); // 觸發閃爍效果
             // 觸發手機震動 (增加手感)
-            if (window.navigator.vibrate) {
+            /*if (window.navigator.vibrate) {
                 window.navigator.vibrate(50);
-            }
+            }*/
 
             // 發送指令給伺服器
             // "playerAction" 是你自己定義的事件名稱，Unity 端也要監聽這個名字
@@ -133,7 +133,7 @@
         }
 
         document.getElementById('startBtn').addEventListener('click', function() {
-            startShakeTracking();
+            //startShakeTracking();
             this.style.display = 'none'; // 點擊後隱藏按鈕
         });
 
@@ -188,9 +188,9 @@
 
         function sendShakeData() {
             triggerFlash('flash-yellow'); // 觸發閃爍效果
-            if(window.navigator.vibrate) {
+            /*if(window.navigator.vibrate) {
                 window.navigator.vibrate(100, 50, 100); // 震動模式：震動-停頓-震動
-            }
+            }*/
             socket.emit('playerAction', {
                 action: "SHAKE",
                 timestamp: Date.now()
