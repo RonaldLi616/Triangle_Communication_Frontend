@@ -114,12 +114,16 @@
 
             // 發送指令給伺服器
             // "playerAction" 是你自己定義的事件名稱，Unity 端也要監聽這個名字
+            if (!socket.connected) {
+                alert("還在連線中，請稍等一秒...");
+                return;
+            }
             socket.emit("playerAction", {
                 id: socket.id,      // 告訴 Unity 是誰按的
                 action: "JUMP",     // 動作類型
                 timestamp: Date.now() // (選填) 用於計算延遲
             });
-        });
+        }, { passive: false }); // passive: false 允許 preventDefault()
 
         function triggerFlash() {
             const body = document.body;
