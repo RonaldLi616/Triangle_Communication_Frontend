@@ -180,30 +180,36 @@
         }*/
 
         function startShakeDetection() {
-            console.log("開始執行權限檢查...");
-            
-            const isIOS = typeof DeviceMotionEvent !== 'undefined' && typeof DeviceMotionEvent.requestPermission === 'function';
+            // 檢查點 1：確保 console 在最前面，用來確認函數有被呼叫
+            console.log("Function called: startShakeDetection");
+            alert("觸發成功：正在檢查權限");
 
-            if (isIOS) {
+            // 檢查點 2：DeviceMotionEvent 的判斷邏輯必須完整
+            if (typeof DeviceMotionEvent !== 'undefined' && typeof DeviceMotionEvent.requestPermission === 'function') {
+                
                 DeviceMotionEvent.requestPermission()
-                    .then((state) => {
-                        if (state === 'granted') {
-                            //window.addEventListener('devicemotion', handleShake);
-                            alert("iOS 權限成功");
+                    .then(function(response) {
+                        if (response === 'granted') {
+                            window.addEventListener('devicemotion', handleShake);
+                            alert("iOS 權限已准許");
+                        } else {
+                            alert("權限被拒絕");
                         }
                     })
-                    .catch((e) => {
-                        alert("錯誤: " + e);
-                    });
+                    .catch(function(error) {
+                        alert("Promise 錯誤: " + error);
+                    }); // 檢查點 3：這裡必須是 }); 結尾
+
             } else {
-                //window.addEventListener('devicemotion', handleShake);
-                console.log("非 iOS 設備，直接監聽");
+                // 非 iOS 裝置
+                window.addEventListener('devicemotion', handleShake);
+                alert("非 iOS 裝置，直接啟動監聽");
             }
         }
 
         let lastX = 0, lastY = 0, lastZ = 0;
         let moveCounter = 0;
-        /*function handleShake(event) {
+        function handleShake(event) {
             let acc = event.accelerationIncludingGravity;
             if(!acc) return;
             
@@ -229,9 +235,9 @@
             lastX = acc.x;
             lastY = acc.y;
             lastZ = acc.z;
-        }*/
+        }
 
-        /*function sendShakeData() {
+        function sendShakeData() {
             triggerFlash('flash-yellow'); // 觸發閃爍效果
             if(window.navigator.vibrate) {
                 window.navigator.vibrate([100, 50, 100]); // 震動模式：震動-停頓-震動
@@ -240,7 +246,7 @@
                 action: "SHAKE",
                 timestamp: Date.now()
             });
-        }*/
+        }
 
     </script>
 </body>
