@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Unity 互動控制器</title>
+    
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+    
+    <style>
+        /* 基礎樣式：讓按鈕充滿螢幕且不可滾動 */
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            background-color: #121212;
+            color: #ffffff;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden; /* 防止捲動 */
+            touch-action: none; /* 禁用預設手勢 */
+        }
+
+        #status-light {
+            width: 12px; height: 12px; border-radius: 50%; background: #ff4757; margin-bottom: 10px;
+        }
+
+        .main-button {
+            width: 250px;
+            height: 250px;
+            background: linear-gradient(145deg, #1e90ff, #3742fa);
+            border-radius: 50%;
+            border: none;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent; /* 移除行動端點擊高亮 */
+        }
+
+        .main-button:active {
+            transform: scale(0.92);
+            background: #2f3542;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="status-light"></div>
+    <div id="status-text">正在等待連線...</div>
+    
+    <br><br>
+
+    <button class="main-button" id="interactBtn">
+        按我互動！
+    </button>
+
+    <script>
+        // 這裡稍後會加入 JavaScript 通訊邏輯
+        // 1. 初始化連線
+        // 這裡的網址是你部署在 Render 或 Heroku 的後端網址
+        const socket = io("https://triangle-communication.onrender.com", {
+            transports: ["websocket"], // 強制使用 WebSocket 減少延遲
+            reconnectionAttempts: 5    // 斷線後嘗試重連次數
+        });
+
+        // 2. 監聽連線事件 (用於給觀眾視覺反饋)
+        socket.on("connect", () => {
+            console.log("連線成功，分配到的 ID: " + socket.id);
+            document.getElementById("status-text").innerText = "已成功連線至大螢幕";
+            document.getElementById("status-light").style.backgroundColor = "#2ed573";
+        });
+
+        socket.on("connect_error", (error) => {
+            document.getElementById("status-text").innerText = "連線失敗，請檢查網路";
+            document.getElementById("status-light").style.backgroundColor = "#ff4757";
+        });
+
+        const btn = document.getElementById('interactBtn');
+
+        // 3. 監聽按鈕事件，發送指令給 Unity
+        btn.addEventListener('touchstart', (e) => {
+            // 防止瀏覽器預設行為（如長按跳出菜單或縮放）
+            e.preventDefault(); 
+
+            // 發送指令給伺服器
+            // "playerAction" 是你自己定義的事件名稱，Unity 端也要監聽這個名字
+            socket.emit("playerAction", {
+                id: socket.id,      // 告訴 Unity 是誰按的
+                action: "JUMP",     // 動作類型
+                timestamp: Date.now() // (選填) 用於計算延遲
+            });
+
+            // 觸發手機震動 (增加手感)
+            if (window.navigator.vibrate) {
+                window.navigator.vibrate(50);
+            }
+        });
+
+        // 監聽手機加速度 (Optional: 可以用來觸發搖晃事件)
+        window.addEventListener('devicemotion', (event) => {
+            let acc = event.accelerationIncludingGravity;
+            
+            // 設定一個閾值，避免過於靈敏導致數據擠爆伺服器
+            // 通常加速度絕對值大於 15 代表有明顯搖晃
+            if (Math.abs(acc.x) > 18 || Math.abs(acc.y) > 18) {
+                // 使用「節流 (Throttle)」概念，不要每毫秒都傳
+                sendShakeData();
+            }
+        });
+
+        let lastShakeTime = 0;
+        function sendShakeData() {
+            let now = Date.now();
+            if (now - lastShakeTime > 200) { // 每 200ms 最多傳一次
+                socket.emit("playerAction", { action: "SHAKE", id: socket.id });
+                lastShakeTime = now;
+            }
+        }
+
+    </script>
+</body>
+</html>
