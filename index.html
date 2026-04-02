@@ -73,6 +73,10 @@
         按我互動！
     </button>
 
+    <button id="startBtn" style="padding: 20px; font-size: 20px;">
+        點擊開始 (啟動感應器)
+    </button>
+
     <script>
         // 這裡稍後會加入 JavaScript 通訊邏輯
         // 1. 初始化連線
@@ -127,6 +131,11 @@
                 body.classList.remove(colorClass);
             }, 50); // 50毫秒後開始退色
         }
+
+        document.getElementById('startBtn').addEventListener('click', function() {
+            startShakeTracking();
+            this.style.display = 'none'; // 點擊後隱藏按鈕
+        });
 
         // Check for device motion support
         function startShakeDetection() {
