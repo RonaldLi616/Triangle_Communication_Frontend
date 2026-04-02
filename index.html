@@ -83,8 +83,10 @@
         // 這裡的網址是你部署在 Render 或 Heroku 的後端網址
         const socket = io("https://triangle-communication.onrender.com", {
             transports: ["websocket"], // 強制使用 WebSocket 減少延遲
+            reconnection: true,        // 啟用自動重連
             reconnectionAttempts: 5,   // 斷線後嘗試重連次數
-            forceNew: true           // 強制建立新連線，避免重複使用舊連線導致問題
+            forceNew: true,           // 強制建立新連線，避免重複使用舊連線導致問題
+            timeout: 10000            // 連線超時設定（10秒）避免無限等待
         });
 
         // 2. 監聽連線事件 (用於給觀眾視覺反饋)
