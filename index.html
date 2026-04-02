@@ -108,7 +108,7 @@
             // 防止瀏覽器預設行為（如長按跳出菜單或縮放）
             e.preventDefault(); 
 
-            //triggerFlash('flash-white'); // 觸發閃爍效果
+            triggerFlash('flash-white'); // 觸發閃爍效果
             // 觸發手機震動 (增加手感)
             /*if (window.navigator.vibrate) {
                 window.navigator.vibrate(50);
@@ -127,9 +127,12 @@
             });
         }, { passive: false }); // passive: false 允許 preventDefault()
 
-        /*function triggerFlash() {
+        const colorClass = 'flash-white'; // 預設閃爍顏色類別
+        function triggerFlash() {
             const body = document.body;
-    
+            
+            if (!colorClass) return; // 如果沒有指定顏色類別，直接返回
+
             // 1. 強制加入閃爍類別
             body.classList.add(colorClass);
             
@@ -137,7 +140,7 @@
             setTimeout(() => {
                 body.classList.remove(colorClass);
             }, 50); // 50毫秒後開始退色
-        }*/
+        }
 
         /*document.getElementById('startBtn').addEventListener('click', function() {
             //startShakeTracking();
